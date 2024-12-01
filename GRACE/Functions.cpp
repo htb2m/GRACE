@@ -46,7 +46,7 @@ bool _Gly_repetition(vector<char> sequence) {
     return goodPeptide;
 }
 
-// A global functions to ensure Gly at every third positions
+// A global functions to ensure Gly at every third positions and return the position of first Gly
 bool findGlyAtEveryThird(int seqLength, vector<char>& userSequence, int& firstGly) {
    
     
@@ -87,13 +87,13 @@ bool findGlyAtEveryThird(int seqLength, vector<char>& userSequence, int& firstGl
 }
 
 
-// GA_Parameters constructor
+// GA_Parameters constructor to initialize the MutationRate of all amino acid to the determined rate
 GA_Parameters::GA_Parameters() {
     MutationRateXaa.resize(alphabetSize, mutationRate);
     MutationRateYaa.resize(alphabetSize, mutationRate);
 }
 
-// GA_Parameters methods
+// GA_Parameters function to turn Mutation rate of exluded amino acids to 0
 void GA_Parameters::setXaaMutationRateToZero(char aminoAcid) {
     auto it = std::find(alphabet.begin(), alphabet.end(), aminoAcid);
     if (it != alphabet.end()) {
@@ -116,12 +116,12 @@ void GA_Parameters::setYaaMutationRateToZero(char aminoAcid) {
 
 GA_Parameters initialPopulationGenerator(GA_Parameters GAparameters) {
     
-    vector<char> alphabet = GAparameters.alphabet;
+    vector<char> alphabet = GAparameters.alphabet; // vector to store the amino acid abbreviations
 
     short randomIndex = -1; // Initialize randomIndex of alphabet
     vector<vector<char>> helix; // Create a vector of vectors to store the sequences
     helix.reserve(GAparameters.numPep);
-    vector<char> sequence; // Create a vector to store the letters
+    vector<char> sequence; // Create a vector to store amino acids
     sequence.reserve(GAparameters.numAA);
 
     GAparameters.Helices.clear();
@@ -137,7 +137,7 @@ GA_Parameters initialPopulationGenerator(GA_Parameters GAparameters) {
     
         if (GAparameters.haveMotif) {
             // -----random-seq-1-----user-seq--------random-seq-2-----
-            // -----12-residues-----user-length------12-residues------
+            // -----15-residues-----user-length------15-residues------
             
           
             
@@ -155,8 +155,6 @@ GA_Parameters initialPopulationGenerator(GA_Parameters GAparameters) {
                     randomIndex = rand() % alphabet.size();
                     // Assign the randomly selected letter to the sequence
                     sequence[j]= alphabet[randomIndex];
-                    //sequence.push_back(alphabet[randomIndex]);
-                    //cout << alphabet[randomIndex];
                 }
                 
                 
@@ -189,7 +187,7 @@ GA_Parameters initialPopulationGenerator(GA_Parameters GAparameters) {
             }
             
             
-            // Delete excluded amino acids if any
+            // Delete excluded amino acids
             int Xaa = -1 , Yaa = -1;
                 int GlyPos = GAparameters.GlyPos;
             if (GlyPos == 0) {Xaa = 1; Yaa = 2;}
@@ -313,7 +311,7 @@ GA_Parameters initialPopulationGenerator(GA_Parameters GAparameters) {
 
 // // // // // // // // // // // /// // // // // // // // CROSSOVER // // // // // // // // // // // /// // // // // // // //
 
-// Function to find indices of 'G' at every third position starting from the first 'G' in the first three residues
+// Function to find indices of 'G' at every third position starting from the first 'G'
 vector<int> findGIndices(const vector<char>& randomSeq) {
     vector<int> indices;
 
@@ -367,7 +365,7 @@ pair<int, int> chooseCrossingPoints (const vector<char>& left, const vector<char
     return {-1, -1};
 }
 
-
+// Function to concatenate to vector <char> into one
 vector<char> concatenate(const vector<char>& vec1, const vector<char>& vec2) {
     vector<char> result(vec1);
     result.insert(result.end(), vec2.begin(), vec2.end());
@@ -401,7 +399,7 @@ GA_Parameters CrossOver_withMotif(GA_Parameters parents) {
         int motifLen = parents.motifLength;
 
         // Pre-reserve memory
-        std::vector<std::vector<char>> randomSeqLeft, randomSeqRight;
+        vector<vector<char>> randomSeqLeft, randomSeqRight;
         randomSeqLeft.reserve(popSize * numPep);
         randomSeqRight.reserve(popSize * numPep);
 
@@ -419,13 +417,13 @@ GA_Parameters CrossOver_withMotif(GA_Parameters parents) {
 
         // Perform crossover for left and right sequences
         auto performCrossover = [&](const std::vector<std::vector<char>>& seqs, int crossingPoint) {
-            std::vector<std::vector<char>> crossedSeqs;
+            vector<vector<char>> crossedSeqs;
             crossedSeqs.reserve(seqs.size() * seqs.size());
             for (const auto& seq1 : seqs) {
                 for (const auto& seq2 : seqs) {
                     if (seq1 == seq2) continue; // Skip identical pairs
-                    crossedSeqs.emplace_back(concatenate(std::vector<char>(seq1.begin(), seq1.begin() + crossingPoint + 1),
-                                                          std::vector<char>(seq2.begin() + crossingPoint + 1, seq2.end())));
+                    crossedSeqs.emplace_back(concatenate(vector<char>(seq1.begin(), seq1.begin() + crossingPoint + 1),
+                                                          vector<char>(seq2.begin() + crossingPoint + 1, seq2.end())));
                 }
             }
             return crossedSeqs;
@@ -440,7 +438,7 @@ GA_Parameters CrossOver_withMotif(GA_Parameters parents) {
 
         for (size_t i = 0; i < newRandomSeqLeft.size() && newHelices.size() < parents.maxHelices; ++i) {
             for (size_t j = 0; j < newRandomSeqRight.size(); ++j) {
-                std::vector<std::vector<char>> newHelix;
+                vector<vector<char>> newHelix;
                 bool validHelix = true;
                 for (int k = 0; k < numPep; ++k) {
                     auto leftSeq = newRandomSeqLeft[i];
@@ -466,7 +464,7 @@ GA_Parameters CrossOver_withMotif(GA_Parameters parents) {
             }
         }
 
-        // Add new helices to offspring
+        // Add new helices to offspring struct
         int totalExistingHelices = parents.Helices.size();
         int newHelicesToAdd = std::min(static_cast<int>(newHelices.size()), (parents.maxHelices - totalExistingHelices));
         Offsprings.Helices.insert(Offsprings.Helices.end(), newHelices.begin(), newHelices.begin() + newHelicesToAdd);
@@ -593,7 +591,6 @@ GA_Parameters CrossOver (GA_Parameters Parents) {
   
         
             Offsprings.populationSize = totalOffsprings.size();
-            //Offsprings.GlyPosition = OffspringsGlyPos;
             Offsprings.Helices = totalOffsprings;
     }
         
@@ -695,7 +692,7 @@ vector<char> mutateSequence_withUI(int helicesIndex, int sequenceIndex, int GlyP
     return mutatedSequence;
 }
 
-
+// Function to check whether the chosen helix has already presented in the population before adding it to the population.
 bool _isUnique(const vector<vector<char>>& offspring, const vector<vector<vector<char>>>& existingHelices, int& indexOfOffspring) {
     
     for (int helix = 0; helix < existingHelices.size(); helix++) {
@@ -714,6 +711,7 @@ bool _isUnique(const vector<vector<char>>& offspring, const vector<vector<vector
     return true;
 }
 
+// Generate new combination of 3 sequences
 void generateCombinations(vector<vector<char>>& mutatedAndOriginal, int start, vector<vector<char>>& current, vector<vector<vector<char>>>& result, short numPep) {
     // Add the current combination to the result
     if (current.size() == numPep) result.push_back(current);
@@ -731,6 +729,7 @@ void generateCombinations(vector<vector<char>>& mutatedAndOriginal, int start, v
     }
 }
 
+// Generate new combination of 3 sequences
 vector<vector<vector<char>>> findCombinations(std::vector<vector<char>>& mutatedAndOriginal, const short& numPep) {
     vector<vector<vector<char>>> result;
     vector<vector<char>> current;
@@ -771,7 +770,6 @@ GA_Parameters Mutation_withMotif(GA_Parameters parents) {
         for (int j = 0; j < numPep; ++j) {
             vector<char> mutated;
             mutated = mutateSequence_withUI(i, j, GlyPos, userSeqStart, userSeqEnd, parents);
-            //mutated = _mutateSequence(i, j, GlyPos, parents.Helices[i][j], parents);
             if (parents.Helices[i][j] != mutated) mutatedSequences.push_back(mutated);
         }
 
@@ -883,7 +881,6 @@ void SCEPTTr12(TripleHelix * Library,
                vector<vector<int>>& outBestReg){
     short numPep = GAparameters.numPep;
    
-    //TripleHelix Library[GAparameters.populationSize];
     parameterType parameters;
     parameters = ReadParameters();
     
@@ -927,8 +924,6 @@ void SCEPTTr12(TripleHelix * Library,
     
     for (i=0; i< GAparameters.populationSize; i++) {
         
-        
-    
         bestReg.clear();
         for (j=0; j<3; j++) {
             bestReg.push_back(Library[i].bestRegister[j]);
@@ -952,13 +947,10 @@ void SCEPTTr12(TripleHelix * Library,
 vector<double> fitnessScore (GA_Parameters GAparameters,
                              TripleHelix * Library,
                             parameterType helixParameters) {
-    short i,j;
     vector<double> FitnessScore;
     FitnessScore.reserve(GAparameters.populationSize);
     FitnessScore.clear();
     
-
-    short numPep = GAparameters.numPep;
     
     parameterType parameters;
     parameters = ReadParameters();
@@ -970,7 +962,7 @@ vector<double> fitnessScore (GA_Parameters GAparameters,
     vector<vector<int>> bestRegister;
    
     
-
+    // Score the library
     SCEPTTr12(Library, helixParameters, GAparameters, Tm, specificity, bestRegister);
     
  
@@ -978,7 +970,7 @@ vector<double> fitnessScore (GA_Parameters GAparameters,
 
     vector<int> CCRegisterScore;
    
-    for (i=0; i< bestRegister.size(); i++) {
+    for (int i=0; i< bestRegister.size(); i++) {
         if ((bestRegister[i][0] == 0) and (bestRegister[i][1] == 1) and (bestRegister[i][2] == 2)) {
             CCRegisterScore.push_back(50);
             

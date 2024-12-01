@@ -16,12 +16,7 @@
 //  Created by Jeffrey Hartgerink, February 2022
 //
 //  Reads parameters from parameters.txt.
-//  Reads a series of sequences in from seq_input.txt.
-//  Scores a series of 1, 2 or 3 peptides based on length, propensity and pairwise amino acid interactions.
-//  Optionally Optimizes parameters
-//  Produces Tm scores for all canonical registers. Highlights the best, second best and specificity of the system.
-//  Writes a summary to output.txt.
-//  1.26 is based off 1.24 because 125 introduced unknown error (probably memory leak)
+
 
 
 #include <iostream>
@@ -30,12 +25,7 @@
 #include <string>
 #include <sstream>
 #include <ctime>
-// #include <stdlib.h>
-// #include <thread>
-// #include <time.h>
-
 using namespace std;
-
 
 
 // This will read in values from parameters.txt, parameters_exp.txt, and opt_list.txt.

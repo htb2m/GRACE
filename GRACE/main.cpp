@@ -30,7 +30,14 @@ int main(int argc, const char * argv[]) {
 
     
     
-// // // // // // // // // // // // // // // // USER INPUT //  // // // // // // // // // // // // // //
+// // // // // // // // // // // // // // // // USER INTERFACE //  // // // // // // // // // // // // // //
+    cout << "---------------------------------------------------------" << endl;
+    cout << "Genetically Refining Algorithm for Collagen Engineering" << endl;
+    cout << "                      GRACE v1.0                       " << endl;
+    cout << "    by T.HA BUI from Hartgerink Lab @ Rice University  " << endl << endl;
+    cout << "---------------------------------------------------------" << endl;
+    
+    cout << endl << endl;
     
     // Read the AminoAcid.csv file
     ifstream file("AminoAcids.csv");
@@ -102,7 +109,8 @@ int main(int argc, const char * argv[]) {
    
     bool haveMotif = false;
 
-    cout << "Do you want to generate a novel heterotrimer or a heterotrimer including recognition epitope? Please enter '0' for novel heterotrimer or '1' heterotrimer including recognition epitope. " << endl; // Sounds bad, will change this prompt later
+    cout << "Do you want to generate a novel heterotrimer or a heterotrimer including recognition epitope?" << endl;
+    cout << "Please enter '0' for novel heterotrimer or '1' heterotrimer including recognition epitope. " << endl;
         while (!(cin >> tempInput) || (tempInput != 1 and tempInput != 0)) {
            cout << "Please enter either '0' or '1': " << endl;
            cin.clear();  // Clear error flag
@@ -122,7 +130,8 @@ int main(int argc, const char * argv[]) {
 
     
     if (haveMotif) {
-        cout << "Please specify the number of amino acids present in your sequences (more than 3 and less than 15) " << endl;
+        cout << "Please specify the number of amino acids present in your sequences" << endl;
+        cout << " (more than 3 and less than 15) " << endl;
         motifLength = -1;
         while ( !(cin >> motifLength) || (motifLength < 3) || motifLength > 15) {
             cout << "Please enter a valid number" << endl;
@@ -293,7 +302,8 @@ int main(int argc, const char * argv[]) {
     
     } else {
         
-        cout << "Do you want to generate AAB or ABC heterotrimer? Please enter '0' for AAB or '1' for ABC." << endl;
+        cout << "Do you want to generate AAB or ABC heterotrimer?" << endl;
+        cout << "Please enter '0' for AAB or '1' for ABC." << endl;
         while (!(cin >> tempInput) || (tempInput != 0 and tempInput != 1)) {
             cout << "Please enter either '0' for AAB or '1' for ABC: " << endl;
             cin.clear();  // Clear error flag
@@ -482,8 +492,8 @@ int main(int argc, const char * argv[]) {
             
             
             // // // // // // // // // // // DISPLAY SEARCHING PROGRESS  // // // // // // // // // // //
-            if ((rounds % 50 == 0) and ((rounds +1) > 1)) {
-                cout << endl << endl;
+            if ((rounds % 50 == 0) and ((rounds) > 1)) {
+                cout << endl ;
                 cout << "--------------------------------------------------------" << endl;
                 cout << "GENERATION NUMBER " << rounds + 1 << endl;
                 cout << "High Tm = Propensity + PairWise = " << Library[0].HighTm << " = " << Library[0].bestPropensity << " + " << Library[0].bestPairwise << endl;
@@ -502,12 +512,8 @@ int main(int argc, const char * argv[]) {
                     }
                 }
                
-                cout << endl;
-                cout <<" Fitness score" << endl;
-                for (int x = 0; x < Parents.populationSize; x++) {
-                    cout << FNScore[x] << " ";
-                }
-                cout << endl;
+                cout << "--------------------------------------------------------" << endl;
+                cout << endl << endl;
                 
             }
            
@@ -521,7 +527,7 @@ int main(int argc, const char * argv[]) {
                 MutatedOS = Mutation(Parents);
             }
             Parents = MutatedOS;
-            cout << "Mutation..";
+            cout << "Mutation...";
             
             
             if (Parents.haveMotif) {
