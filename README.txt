@@ -7,7 +7,7 @@ GRACE was designed to accept user input of target melting temperature (Tm) and s
  	b. <Linux version to be tested>
 
 3. Installation guide 
-	a. Download: Download the zipped GRACE file from [link to download].
+	a. Download: Download the zipped GRACE file from SI [link].
 	b.Unzip: Extract the contents of the ZIP file to a desired location. This will create a folder containing:
 	i.GRACE: The executable file.
 	ii. AminoAcids.csv: This file can be modified to limit the amino acid pool for sequence generation. Ensure that values are either 0 or 1.
