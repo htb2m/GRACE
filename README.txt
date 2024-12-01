@@ -25,7 +25,7 @@ GRACE was designed to accept user input of target melting temperature (Tm) and s
 		./GRACE
         d. Answer the prompts to start the search. 
 	i. Searching time can range from minutes to hours depending on the given conditions and the length of sequences. 
-	ii. Please expect that there are chances that the algorithm cannot find a set of sequences that satisfy all given conditions. In that case, the algorithm terminated after 500,000 iterations and output the closet results found. 
+	ii. Please expect that there are chances that the algorithm cannot find a set of sequences that satisfy all given conditions. In that case, the algorithm is terminated after 500,000 iterations and outputs the closet results found. 
 
 4. Intepretation of outputs
 	a. 
