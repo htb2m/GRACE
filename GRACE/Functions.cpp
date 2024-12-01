@@ -802,11 +802,11 @@ GA_Parameters Mutation_withMotif(GA_Parameters parents) {
     }
 
     // update the mutatedOffspring struct
-    if (newPopulation.size() != 0) {
+   
         mutatedOffsprings.populationSize = newPopulation.size();
         mutatedOffsprings.Helices = newPopulation;
         //mutatedOffsprings.GlyPosition = newGlyPos;
-    }
+
 
 
     return mutatedOffsprings;
