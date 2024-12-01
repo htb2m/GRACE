@@ -1,0 +1,7 @@
+# Xcode
+*.xcworkspace
+xcuserdata/
+DerivedData/
+*.plist
+build/
+
