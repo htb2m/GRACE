@@ -492,10 +492,10 @@ int main(int argc, const char * argv[]) {
             
             
             // // // // // // // // // // // DISPLAY SEARCHING PROGRESS  // // // // // // // // // // //
-            if ((rounds % 50 == 0) and ((rounds) > 1)) {
+            if ((rounds % 50 == 0) and ((rounds +1) > 1)) {
                 cout << endl ;
                 cout << "--------------------------------------------------------" << endl;
-                cout << "GENERATION NUMBER " << rounds + 1 << endl;
+                cout << "GENERATION NUMBER " << rounds << endl;
                 cout << "High Tm = Propensity + PairWise = " << Library[0].HighTm << " = " << Library[0].bestPropensity << " + " << Library[0].bestPairwise << endl;
                 cout << "BestRegister " << Library[0].bestRegister[0] << Library[0].bestRegister[1] << Library[0].bestRegister[2] << ". Specificity = " << Library[0].specificity << endl << endl;
                 
