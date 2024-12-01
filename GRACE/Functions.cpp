@@ -818,7 +818,6 @@ GA_Parameters Mutation (GA_Parameters parents) {
     int i;
     short numPep = parents.numPep;
     
-    
     GA_Parameters mutatedOffsprings = parents;
 
     vector<vector<vector<char>>> newPopulation; // vector to store the final results
@@ -855,16 +854,14 @@ GA_Parameters Mutation (GA_Parameters parents) {
                 newGlyPos.push_back(GlyPos);
             }
             
-            
         }
         
     }
     
     // update the mutatedOffspring struct
-    if (newPopulation.size() != 0) {
         mutatedOffsprings.populationSize = newPopulation.size();
         mutatedOffsprings.Helices = newPopulation;
-    }
+
     
     
     return mutatedOffsprings;

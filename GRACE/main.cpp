@@ -314,7 +314,7 @@ int main(int argc, const char * argv[]) {
       
         
         // Input sequence length
-        cout << "Please enter a number between 21 and 40 as peptide Length: " << endl;
+        cout << "Please enter a number between 24 and 40 as peptide Length: " << endl;
         while (!(cin >> userLength) || userLength < 21 || userLength > 40) {
             cout << "Please enter a number between 21 and 40: " << endl;
             cin.clear();  // Clear error flag

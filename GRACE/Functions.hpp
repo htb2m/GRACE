@@ -47,7 +47,7 @@ struct GA_Parameters {
     int GlyPos = 0;
     vector<vector<vector<char>>> Helices;
     
-    double crossoverRate = 0.3;
+    double crossoverRate = 0;
     double mutationRate = 0.3;
     vector<double> MutationRateXaa;
     vector<double> MutationRateYaa;
