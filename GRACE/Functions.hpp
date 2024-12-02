@@ -25,7 +25,7 @@
 
 using namespace std;
 
-bool _Gly_repetition(std::vector<char> sequence);
+bool Gly_repetition(std::vector<char> sequence);
 bool findGlyAtEveryThird(int seqLength, std::vector<char>& userSequence, int& firstGly);
 
 // // // // // // // // // // // /// // // // // // // // IMPORTANT PARAMETERS // // // // // // // // // // // /// // // // // // // //
@@ -41,7 +41,7 @@ struct GA_Parameters {
   
     int alphabetSize = alphabet.size();
     
-    int populationSize = 100;
+    int populationSize = maxHelices;
     int numAA = 30;
     int numPep = 3;
     int GlyPos = 0;

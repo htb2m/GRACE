@@ -345,228 +345,194 @@ int main(int argc, const char * argv[]) {
 // // // // // // // // // // // // // // ///   END OF UI  // // // // // // // // // // // // // // // //
     
 
-        cout << endl << endl;
-        //cout << "Sequence Length: " << userLength << endl;
-        cout << "Target Tm = " << userTm << "; Target Specificity = " << userSpec << endl;
-        cout << endl;
-        cout << "GENERATING A HETEROTRIMER" << endl << endl;
-        
-        GA_Parameters Parents;
-        
-        
-        TripleHelix Library[Parents.maxHelices];
-        parameterType parameters;
-        parameters = ReadParameters();
-        
-       
-        // // // // // // // // // // //  INITIALIZE Parents STRUCT WITH UI // // // // // // // // // // //
-        
-        Parents.AAB = userAAB; // ABC or AAB; default is ABC
-        if (userAAB) Parents.numPep = 2;
-       
-     
-        // Excluded amino acid
-        Parents.excludeXaa = excludeXaa;
-        Parents.excludedXaaList = excludedXaaList;
-        Parents.numExcludedXaa = numXaaExcluded;
-        Parents.excludedXaaList.clear();
-        for (char aminoAcid : excludedXaaList) {
-            Parents.setXaaMutationRateToZero(aminoAcid);
-            Parents.excludedXaaList.push_back(aminoAcid);
-        }
-        
-        Parents.excludeYaa = excludeYaa;
-        Parents.excludedYaaList = excludedYaaList;
-        Parents.numExcludedYaa = numYaaExcluded;
-        Parents.excludedYaaList.clear();
-        for (char aminoAcid : excludedYaaList) {
-            Parents.setYaaMutationRateToZero(aminoAcid);
-            Parents.excludedYaaList.push_back(aminoAcid);
-        }
-        
-        Parents.haveMotif = haveMotif;
-        
-        if (Parents.haveMotif) {
-            Parents.haveMotif = haveMotif;
-            Parents.motifLength = motifLength;
-            Parents.MotifSequences.resize(Parents.numPep);
-            Parents.MotifSequences[0] = Seq1;
-            Parents.MotifSequences[1] = Seq2;
-            if (not Parents.AAB) {
-                Parents.MotifSequences[2] = Seq3;
-            }
-            Parents.GlyPos = firstGPosition;
-        }
-        
-        
-        Parents.numAA = userLength;  // Initialize sequence length (default = 30)
-        if (Parents.haveMotif) Parents.numAA = motifLength + Parents.randomSeqLength*2;
-
-
-        // // // // // // // // // // //   GENERATE POPULATION  // // // // // // // // // // // // //
-        
-
-        // Generate ParentHelices
-        Parents = initialPopulationGenerator(Parents); // random sequence
-     
-        
-        // // // // // // // // // // //   SCORE POPULATION // // // // // // // // // // // // //
-        
-        
-        vector<double> FNScore = fitnessScore(Parents, Library, parameters);
-
-        
-        // // // // // // // // // // // // //  SELECTION   // // // // // // // // // // // // //
-       
-        
-        //GA_Parameters bestParents = Selection(Parents, FNScore);
-        GA_Parameters bestParents = Selection(Parents, FNScore);
-        
-       
-        Parents = bestParents; // 2 helices with best fitness score are now Parents for the next generation
-       
-
-        // // // // // // // // // // // //  MUTATION  // // // // // // // // // // // // //
-     
-       
-     
-       GA_Parameters MutatedOS;
-       if (!haveMotif) {
-           MutatedOS = Mutation(Parents);
-       } else {
-           MutatedOS = Mutation_withMotif(Parents);
-       }
+    cout << endl << endl;
+    //cout << "Sequence Length: " << userLength << endl;
+    cout << "Target Tm = " << userTm << "; Target Specificity = " << userSpec << endl;
     
-        Parents = MutatedOS;
-       
-        
-        if (Parents.haveMotif) {
-                // // // // // // // // // // //   SCORE POPULATION // // // // // // // // // // // // //
-
-                FNScore = fitnessScore(Parents, Library, parameters);
-
-
-                // // // // // // // // // // // // //  SELECTION   // // // // // // // // // // // // //
-
-                bestParents = Selection(Parents, FNScore);
-
-                Parents = bestParents; // 2 helices with best fitness score are now Parents for the next generation
-
+    
+    GA_Parameters Parents;
+    
+    
+    TripleHelix Library[Parents.maxHelices];
+    parameterType parameters;
+    parameters = ReadParameters();
+    
+   
+    // // // // // // // // // // //  INITIALIZE Parents STRUCT WITH UI // // // // // // // // // // //
+    
+    Parents.AAB = userAAB; // ABC or AAB; default is ABC
+    if (userAAB) Parents.numPep = 2;
+   
+ 
+    // Excluded amino acid
+    Parents.excludeXaa = excludeXaa;
+    Parents.excludedXaaList = excludedXaaList;
+    Parents.numExcludedXaa = numXaaExcluded;
+    Parents.excludedXaaList.clear();
+    for (char aminoAcid : excludedXaaList) {
+        Parents.setXaaMutationRateToZero(aminoAcid);
+        Parents.excludedXaaList.push_back(aminoAcid);
+    }
+    
+    Parents.excludeYaa = excludeYaa;
+    Parents.excludedYaaList = excludedYaaList;
+    Parents.numExcludedYaa = numYaaExcluded;
+    Parents.excludedYaaList.clear();
+    for (char aminoAcid : excludedYaaList) {
+        Parents.setYaaMutationRateToZero(aminoAcid);
+        Parents.excludedYaaList.push_back(aminoAcid);
+    }
+    
+    Parents.numAA = userLength;  // Initialize sequence length (default = 30)
+    
+    Parents.haveMotif = haveMotif;
+    
+    if (Parents.haveMotif) {
+        Parents.haveMotif = haveMotif;
+        Parents.motifLength = motifLength;
+        Parents.MotifSequences.resize(Parents.numPep);
+        Parents.MotifSequences[0] = Seq1;
+        Parents.MotifSequences[1] = Seq2;
+        if (not Parents.AAB) {
+            Parents.MotifSequences[2] = Seq3;
         }
+        Parents.GlyPos = firstGPosition;
+        Parents.numAA = motifLength + Parents.randomSeqLength*2;
+    }
+    
+
+        
+        
+    cout << endl;
+    cout << "Generating random population..." << endl << endl;
 
 
-        
-        // // // // // // // // // // // //  CROSSOVER  // // // // // // // // // // // // //
-        
-        GA_Parameters CrossoverOS;
-        if (Parents.haveMotif) {
-            CrossoverOS = CrossOver_withMotif(Parents);
-        } else {
-            CrossoverOS = CrossOver(Parents);
-        }
-        
-        
-         
-        // // // // // // // // // // //   SCORE POPULATION // // // // // // // // // // // // //
-        
-        
-        FNScore = fitnessScore(Parents, Library, parameters);
-       
-        
-        // // // // // // // // // // // // //  SELECTION   // // // // // // // // // // // // //
-       
-        
-        bestParents = Selection(Parents, FNScore);
-        
-        Parents = bestParents; // 2 helices with best fitness score are now Parents for the next generation
-       
-       
-       
-        // // // // // // // // // // // // //  EVOLUTION LOOP  // // // // // // // // // // // // //
-        
+    // // // // // // // // // // //   GENERATE POPULATION  // // // // // // // // // // // // //
+    
 
-        int rounds = 0;
-        bool done = false;
+    // Generate ParentHelices
+    Parents = initialPopulationGenerator(Parents); // random sequence
+    
+
+ 
+    
+    // // // // // // // // // // //   SCORE POPULATION // // // // // // // // // // // // //
+    
+    
+    vector<double> FNScore = fitnessScore(Parents, Library, parameters);
+
+    
+    // // // // // // // // // // // // //  SELECTION   // // // // // // // // // // // // //
+   
+    
+    //GA_Parameters bestParents = Selection(Parents, FNScore);
+    GA_Parameters bestParents = Selection(Parents, FNScore);
+    
+   
+    Parents = bestParents; // 2 helices with best fitness score are now Parents for the next generation
+   
+   
+
+    // // // // // // // // // // // //  MUTATION  // // // // // // // // // // // // //
+ 
+   
+ 
+   GA_Parameters MutatedOS;
+   if (!haveMotif) {
+       MutatedOS = Mutation(Parents);
+   } else {
+       MutatedOS = Mutation_withMotif(Parents);
+   }
+
+    Parents = MutatedOS;
+   
+    
+    if (Parents.haveMotif) {
+            // // // // // // // // // // //   SCORE POPULATION // // // // // // // // // // // // //
+
+            FNScore = fitnessScore(Parents, Library, parameters);
+
+
+            // // // // // // // // // // // // //  SELECTION   // // // // // // // // // // // // //
+
+            bestParents = Selection(Parents, FNScore);
+
+            Parents = bestParents; // 2 helices with best fitness score are now Parents for the next generation
+
+    }
+
+
+    
+    // // // // // // // // // // // //  CROSSOVER  // // // // // // // // // // // // //
+    
+    GA_Parameters CrossoverOS;
+    if (Parents.haveMotif) {
+        CrossoverOS = CrossOver_withMotif(Parents);
+    } else {
+        CrossoverOS = CrossOver(Parents);
+    }
+    
+    
+     
+    // // // // // // // // // // //   SCORE POPULATION // // // // // // // // // // // // //
+    
+    
+    FNScore = fitnessScore(Parents, Library, parameters);
+   
+    
+    // // // // // // // // // // // // //  SELECTION   // // // // // // // // // // // // //
+   
+    
+    bestParents = Selection(Parents, FNScore);
+    
+    Parents = bestParents; // 2 helices with best fitness score are now Parents for the next generation
+   
+   
+   
+    // // // // // // // // // // // // //  EVOLUTION LOOP  // // // // // // // // // // // // //
+    
+
+    int rounds = 0;
+    bool done = false;
+    
+    while (not done) {
         
-        while (not done) {
+        
+        // // // // // // // // // // // DISPLAY SEARCHING PROGRESS  // // // // // // // // // // //
+        if ((rounds % 100 == 0) and ((rounds +1) > 1)) {
+            cout << endl ;
+            cout << "-----------------------------------------------------------------------------------------------------" << endl;
+            cout << "GENERATION NUMBER " << rounds << endl;
+            cout << "High Tm = Propensity + PairWise = " << Library[0].HighTm << " = " << Library[0].bestPropensity << " + " << Library[0].bestPairwise << endl;
+            cout << "BestRegister " << Library[0].bestRegister[0] << Library[0].bestRegister[1] << Library[0].bestRegister[2] << ". Specificity = " << Library[0].specificity << endl << endl;
             
-            
-            // // // // // // // // // // // DISPLAY SEARCHING PROGRESS  // // // // // // // // // // //
-            if ((rounds % 50 == 0) and ((rounds +1) > 1)) {
-                cout << endl ;
-                cout << "--------------------------------------------------------" << endl;
-                cout << "GENERATION NUMBER " << rounds << endl;
-                cout << "High Tm = Propensity + PairWise = " << Library[0].HighTm << " = " << Library[0].bestPropensity << " + " << Library[0].bestPairwise << endl;
-                cout << "BestRegister " << Library[0].bestRegister[0] << Library[0].bestRegister[1] << Library[0].bestRegister[2] << ". Specificity = " << Library[0].specificity << endl << endl;
-                
-                
-                // Display the ParentHelices
-                cout << "parents" << endl;
-                for (int x = 0; x < Parents.populationSize; x++) {
-                    cout << "Helix : " << x +1 << endl;
-                    for (int y = 0; y < Parents.numPep; y++) {
-                        for (int z = 0; z < Parents.numAA; z++) {
-                            cout << Parents.Helices[x][y][z];
-                        }
-                        cout << endl;
-                    }
+            for (int a = 0; a < Parents.numPep; a++) {
+                for (int b = 0; b < Parents.numAA; b++) {
+                    cout << Parents.Helices[0][a][b];
                 }
-               
-                cout << "--------------------------------------------------------" << endl;
-                cout << endl << endl;
-                
+                cout << endl;
             }
-           
-            cout << "Generation number " << rounds + 1 << " - ";
-            
-            // // // // // // // // // // // // //   MUTATION  // // // // // // // // // // // // //
-            
-            if (Parents.haveMotif) {
-                MutatedOS = Mutation_withMotif(Parents);
-            } else {
-                MutatedOS = Mutation(Parents);
-            }
-            Parents = MutatedOS;
-            cout << "Mutation...";
-            
-            
-            if (Parents.haveMotif) {
-                // // // // // // // // // // // // FITNESS COMPUTING  // // // // // // // // // // // // //
-                
-                FNScore = fitnessScore(Parents, Library, parameters);
-                
-                cout << "Fitness computing..." ;
-               
-                // // // // // // // // // // // BEST PARENTS SELECTION  // // // // // // // // // // // //
-                bestParents = Selection(Parents, FNScore);
-                
-                Parents = bestParents; // bestParents are now Parent for the next generation
-                
-                cout << "Selecting parent helices...";
-                
-            }
-
-            
-            // // // // // // // // // // // // //  CROSSOVER  // // // // // // // // // // // // //
-            
-            GA_Parameters CrossoverOS;
-            if (Parents.haveMotif) {
-                CrossoverOS = CrossOver_withMotif(Parents);
-            } else {
-                CrossoverOS = CrossOver(Parents);
-            }
-            
-            Parents = CrossoverOS;
-            cout << "Crossover..";
-            
-
             
            
+            cout << "-----------------------------------------------------------------------------------------------------" << endl;
+            cout << endl << endl;
             
-            
-            
-            
-            
+        }
+       
+        cout << "Generation number " << rounds + 1 << " - ";
+        
+        // // // // // // // // // // // // //   MUTATION  // // // // // // // // // // // // //
+        
+        if (Parents.haveMotif) {
+            MutatedOS = Mutation_withMotif(Parents);
+        } else {
+            MutatedOS = Mutation(Parents);
+        }
+        Parents = MutatedOS;
+        cout << "Mutation...";
+        
+        
+        if (Parents.haveMotif) {
             // // // // // // // // // // // // FITNESS COMPUTING  // // // // // // // // // // // // //
             
             FNScore = fitnessScore(Parents, Library, parameters);
@@ -580,51 +546,98 @@ int main(int argc, const char * argv[]) {
             
             cout << "Selecting parent helices...";
             
-            cout << endl;
-           
-            
-            // // // // // // // // // // // LOOP-BREAKING CONDITIONS // // // // // // // // // // // //
-            
-            if (((Library[0].HighTm >= userTm ) and (Library[0].specificity >= userSpec)  and  ((Library[0].bestRegister[0] != Library[0].bestRegister[1]) or (Library[0].bestRegister[0] != Library[0].bestRegister[2]) or (Library[0].bestRegister[1] != Library[0].bestRegister[2])))
-                or
-                (rounds == 500000)) // return the closest result
-            {
-                done = true;
+        }
+
+        
+        // // // // // // // // // // // // //  CROSSOVER  // // // // // // // // // // // // //
+        
+        GA_Parameters CrossoverOS;
+        if (Parents.haveMotif) {
+            CrossoverOS = CrossOver_withMotif(Parents);
+        } else {
+            CrossoverOS = CrossOver(Parents);
+        }
+        
+        Parents = CrossoverOS;
+        cout << "Crossover..";
+        
+
+        
+       
+        
+        
+        
+        
+        
+        // // // // // // // // // // // // FITNESS COMPUTING  // // // // // // // // // // // // //
+        
+        FNScore = fitnessScore(Parents, Library, parameters);
+        
+        cout << "Fitness computing..." ;
+       
+        // // // // // // // // // // // BEST PARENTS SELECTION  // // // // // // // // // // // //
+        bestParents = Selection(Parents, FNScore);
+        
+        Parents = bestParents; // bestParents are now Parent for the next generation
+        
+        cout << "Selecting parent helices...";
+        
+        cout << endl;
+       
+        
+        // // // // // // // // // // // LOOP-BREAKING CONDITIONS // // // // // // // // // // // //
+        
+        if (((Library[0].HighTm >= userTm ) and (Library[0].specificity >= userSpec)  and  ((Library[0].bestRegister[0] != Library[0].bestRegister[1]) or (Library[0].bestRegister[0] != Library[0].bestRegister[2]) or (Library[0].bestRegister[1] != Library[0].bestRegister[2])))
+            or
+            (rounds == 100000)) // return the closest result
+        {
+            done = true;
+        }
+       
+        rounds += 1;
+       
+    }
+    
+    // // // // // // // // // // // DISPLAY FINAL RESULTS // // // // // // // // // // // //
+    cout << endl << endl << endl;
+    cout << "-------------------------------------------------------------" << endl;
+    if (rounds == 500000) {
+        cout << "Cannot come up with sequences that satisfy all the given conditions. Displaying the best result found: " << endl << endl;
+    }
+    
+    cout << "STOP AT GENERATION NUMBER " << rounds << endl << endl;
+    
+    cout << "FITNESS SCORE: ";
+    
+    cout << FNScore[0] << endl;
+    
+    if (Parents.haveMotif) {
+        cout << "User inputs: " << endl;
+        for (int i = 0; i < Parents.MotifSequences.size(); i++) {
+            cout << "Sequence " << i << ": ";
+            for (int j = 0; j < Parents.MotifSequences[i].size(); j++) {
+                cout << Parents.MotifSequences[i][j];
             }
-           
-            rounds += 1;
-           
+            cout << endl;
         }
-        
-        // // // // // // // // // // // DISPLAY FINAL RESULTS // // // // // // // // // // // //
-        cout << endl << endl << endl;
-        cout << "-------------------------------------------------------------" << endl;
-        if (rounds == 500000) {
-            cout << "Cannot come up with sequences that satisfy all the given conditions. Displaying the best result found: " << endl << endl;
-        }
-        
-        cout << "STOP AT GENERATION NUMBER " << rounds << endl << endl;
-        
-        cout << "FITNESS SCORE: " << endl;
-        for (i=0; i<Parents.populationSize; i++){
-                cout << FNScore[i] << " ";
-        }
-        
-        cout << endl;
-        cout << "------------------------" << endl << endl;
-        
-        for (i=0; i < 1; i++) {
-            cout << "High Tm = Propensity + PairWise = " << Library[i].HighTm << " = " << Library[i].bestPropensity << " + " << Library[i].bestPairwise << endl;
-            Library[i].dissect();
-            Library[i].userOutput();
-        
-        
-        }
-        
-        cout << endl;
-        
-     
-        
+    }
+
+    
+    cout << endl;
+    cout << "------------------------" << endl << endl;
+    
+    for (i=0; i < 1; i++) {
+        cout << "High Tm = Propensity + PairWise = " << Library[i].HighTm << " = " << Library[i].bestPropensity << " + " << Library[i].bestPairwise << endl;
+        Library[i].dissect();
+        Library[i].userOutput();
+    
+    
+    }
+    
+    cout << endl;
+    
+ 
+    
     
     
     

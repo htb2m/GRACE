@@ -23,7 +23,7 @@
 
 using namespace std;
 
-bool _Gly_repetition(vector<char> sequence) {
+bool Gly_repetition(vector<char> sequence) {
     short x, xCount, yCount, zCount;
     bool goodPeptide;
     
@@ -226,7 +226,7 @@ GA_Parameters initialPopulationGenerator(GA_Parameters GAparameters) {
             // Check if Gly at everythird position
             bool GlyCheck = true;
                 for (int i=0; i< GAparameters.numPep; i++) {
-                GlyCheck = _Gly_repetition(helix[i]);
+                GlyCheck = Gly_repetition(helix[i]);
                 if (!GlyCheck) break;
             }
             if (GlyCheck) {
@@ -294,7 +294,7 @@ GA_Parameters initialPopulationGenerator(GA_Parameters GAparameters) {
             // CHECK IF Gly AT EVERY THIRD POS
             bool GlyCheck = true;
             for (int i=0; i<GAparameters.numPep; i++) {
-                GlyCheck = _Gly_repetition(helix[i]);
+                GlyCheck = Gly_repetition(helix[i]);
                 if (!GlyCheck) break;
             }
             if (GlyCheck) {
@@ -447,7 +447,7 @@ GA_Parameters CrossOver_withMotif(GA_Parameters parents) {
 
                     auto helix = concatenate(concatenate(leftSeq, motif), rightSeq);
 
-                    if (!_Gly_repetition(helix)) {
+                    if (!Gly_repetition(helix)) {
                         validHelix = false;
                         break;
                     }
@@ -645,55 +645,8 @@ vector<char> mutateSequence(vector<char> sequence, GA_Parameters parents) {
 }
 
 
-vector<char> mutateSequence_withUI(int helicesIndex, int sequenceIndex, int GlyPos, int userSeqStart, int userSeqEnd, GA_Parameters parents) {
-    vector<char> mutatedSequence;
-    double randomNumber;
-    int randomIndex;
-    
-    int k;
-    vector<char> alphabet = parents.alphabet;
-    int Xaa = -1 , Yaa = -1;
-    
-    if (GlyPos == 0) {Xaa = 1; Yaa = 2;}
-    if (GlyPos == 1) {Xaa = 2; Yaa = 0;}
-    if (GlyPos == 2) {Xaa = 0; Yaa = 1;}
-    
-    // Mutate XaaPos
-    for (k=Xaa; k < parents.numAA; k+=3) {
-        // Generate a random number between 0 and 1 to compare with the mutation rate
-        if (k >= userSeqStart and k <= userSeqEnd) {
-            randomNumber = 2;}
-        else {
-            randomNumber = static_cast<double>(rand()) / RAND_MAX;
-        }
-        // Generate random index of the alphabet to mutate
-        randomIndex = rand() % alphabet.size();
-       
-        if (randomNumber < parents.MutationRateXaa[randomIndex]) {
-            parents.Helices[helicesIndex][sequenceIndex][k] = alphabet[randomIndex];}
-    }
-    
-    // Mutate YaaPos
-    for (k=Yaa; k < parents.numAA; k+=3) {
-        // Generate a random number between 0 and 1 to compare with the mutation rate
-        if (k >= userSeqStart and k <= userSeqEnd) {
-            randomNumber = 2;}
-        else {
-            randomNumber = static_cast<double>(rand()) / RAND_MAX;
-        }
-        // Generate random index of the alphabet to mutate
-        randomIndex = rand() % alphabet.size();
-        if (randomNumber < parents.MutationRateYaa[randomIndex]) {
-            parents.Helices[helicesIndex][sequenceIndex][k] = alphabet[randomIndex];}
-    }
-    
-    mutatedSequence = parents.Helices[helicesIndex][sequenceIndex];
-    
-    return mutatedSequence;
-}
-
 // Function to check whether the chosen helix has already presented in the population before adding it to the population.
-bool _isUnique(const vector<vector<char>>& offspring, const vector<vector<vector<char>>>& existingHelices, int& indexOfOffspring) {
+bool isUnique(const vector<vector<char>>& offspring, const vector<vector<vector<char>>>& existingHelices, int& indexOfOffspring) {
     
     for (int helix = 0; helix < existingHelices.size(); helix++) {
         if (helix == indexOfOffspring) continue; // Skip the helix's index
@@ -769,7 +722,7 @@ GA_Parameters Mutation_withMotif(GA_Parameters parents) {
 
         for (int j = 0; j < numPep; ++j) {
             vector<char> mutated;
-            mutated = mutateSequence_withUI(i, j, GlyPos, userSeqStart, userSeqEnd, parents);
+            mutated = mutateSequence(parents.Helices[i][j], parents);
             if (parents.Helices[i][j] != mutated) mutatedSequences.push_back(mutated);
         }
 
@@ -782,17 +735,15 @@ GA_Parameters Mutation_withMotif(GA_Parameters parents) {
         // Generate all possibles combination of mutated and original sequences
         vector<vector<vector<char>>> combinations = findCombinations(combined, numPep);
         
-        
+      
         for (int helixIndex = 0; helixIndex < combinations.size(); helixIndex++) {
             // Insert user motif to mutated sequences
             for (int pep = 0; pep < combinations[helixIndex].size(); pep++) {
-                vector <char> seq = combinations[helixIndex][pep];
                 for (int aa = 0; aa < parents.motifLength; aa++) {
-                    seq[aa+ parents.randomSeqLength] = parents.MotifSequences[pep][aa];
-                    
+                    combinations[helixIndex][pep][aa+ parents.randomSeqLength] = parents.MotifSequences[pep][aa];
                 }
             }
-            if (_isUnique(combinations[helixIndex], combinations, helixIndex)){
+            if (isUnique(combinations[helixIndex], combinations, helixIndex)){
                 newPopulation.push_back(combinations[helixIndex]);
                 newGlyPos.push_back(GlyPos);
             }
@@ -834,7 +785,7 @@ GA_Parameters Mutation (GA_Parameters parents) {
         for (int j = 0; j < numPep; ++j) {
             vector<char> mutated;
             mutated = mutateSequence(parents.Helices[i][j], parents);
-            if (parents.Helices[i][j] != mutated and _Gly_repetition(mutated)) mutatedSequences.push_back(mutated);
+            if (parents.Helices[i][j] != mutated and Gly_repetition(mutated)) mutatedSequences.push_back(mutated);
         }
         
         // push the mutated sequences to the combined vector that already includes the original sequences
@@ -849,7 +800,7 @@ GA_Parameters Mutation (GA_Parameters parents) {
         
         
         for (int helixIndex = 0; helixIndex < combinations.size(); helixIndex++) {
-            if (_isUnique(combinations[helixIndex], combinations, helixIndex)) {
+            if (isUnique(combinations[helixIndex], combinations, helixIndex)) {
                 newPopulation.push_back(combinations[helixIndex]);
                 newGlyPos.push_back(GlyPos);
             }
