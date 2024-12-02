@@ -133,7 +133,7 @@ int main(int argc, const char * argv[]) {
    
     bool haveMotif = false;
 
-    cout << "Do you want to generate a novel heterotrimer or a heterotrimer including recognition epitope?" << endl;
+    cout << "Do you want to generate a heterotrimer or a heterotrimer including recognition epitope?" << endl;
     cout << "Please enter '0' for novel heterotrimer or '1' heterotrimer including recognition epitope. " << endl;
         while (!(cin >> tempInput) || (tempInput != 1 and tempInput != 0)) {
            cout << "Please enter either '0' or '1': " << endl;
