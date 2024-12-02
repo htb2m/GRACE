@@ -3,7 +3,6 @@ GRACE was designed to accept user input of target melting temperature (Tm) and s
 
 2. System requirements.
 	a. macOS
-		i.  GRACE was compiled using Xcode version 2408, thereby requiring macOS sonoma 14.5 or later to execute. 
  	b. <Linux version to be tested>
 
 3. Installation guide 
