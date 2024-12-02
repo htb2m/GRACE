@@ -20,13 +20,6 @@
 
 using namespace std;
 
-bool isValidNumber(const string &s, int &value) {
-    stringstream ss(s);
-    ss >> value;               // Try to parse the string as an integer
-    return !(ss.fail() || !ss.eof()); // Valid if parsing succeeds and nothing is left over
-}
-
-
 int main(int argc, const char * argv[]) {
    
  
