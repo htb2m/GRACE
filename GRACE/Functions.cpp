@@ -252,6 +252,10 @@ GA_Parameters initialPopulationGenerator(GA_Parameters GAparameters) {
                 }
                 helix[i] = sequence;
             }
+            
+            
+            // Randomly generate frameshift, GlyPos can be 0 (Gxy), 1 (yGx), or 2 (xyG)
+            GAparameters.GlyPos = rand() % 3;
 
             for (int i = 0; i < GAparameters.numPep; i++) { // INSERT Gly to EVERY THIRD POS
                 for (int j = GAparameters.GlyPos; j < GAparameters.numAA; j+=3) {
