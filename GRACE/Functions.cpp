@@ -23,6 +23,59 @@
 
 using namespace std;
 
+
+    
+// GA_Parameters constructor to initialize parameters
+GA_Parameters::GA_Parameters() {
+    // Initialize alphabet with canonical amino acids and hydroxyproline abbreviations
+    alphabet = {'a', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'v', 'w', 'y'};
+    alphabetSize = alphabet.size();
+    
+    maxHelices = 1250; // the array size of SCEPTTr library
+   
+    AAB = false; // if true, generate AAB ht instead of ABC ht
+    
+    populationSize = maxHelices;
+    numAA = 30;
+    numPep = 3;
+    GlyPos = 0;
+
+    crossoverRate = 0;
+    mutationRate = 0.3;
+    
+    excludeXaa = false;
+    excludeYaa = false;
+    numExcludedXaa = 0;
+    numExcludedYaa = 0;
+    
+    haveMotif = false;
+    motifLength = 0;
+    randomSeqLength = 15;
+    
+    // Initialize alphabetSize based on the alphabet vector size
+    alphabetSize = alphabet.size();
+
+    MutationRateXaa.resize(alphabetSize, mutationRate);
+    MutationRateYaa.resize(alphabetSize, mutationRate);
+}
+
+// GA_Parameters function to turn Mutation rate of exluded amino acids to 0
+void GA_Parameters::setXaaMutationRateToZero(char aminoAcid) {
+    auto it = std::find(alphabet.begin(), alphabet.end(), aminoAcid);
+    if (it != alphabet.end()) {
+        int index = std::distance(alphabet.begin(), it);
+        MutationRateXaa[index] = 0;
+    }
+}
+
+void GA_Parameters::setYaaMutationRateToZero(char aminoAcid) {
+    auto it = std::find(alphabet.begin(), alphabet.end(), aminoAcid);
+    if (it != alphabet.end()) {
+        int index = std::distance(alphabet.begin(), it);
+        MutationRateYaa[index] = 0;
+    }
+}
+
 bool Gly_repetition(vector<char> sequence) {
     short x, xCount, yCount, zCount;
     bool goodPeptide;
@@ -84,30 +137,6 @@ bool findGlyAtEveryThird(int seqLength, vector<char>& userSequence, int& firstGl
     
     return GlyAtEveryThird;
     
-}
-
-
-// GA_Parameters constructor to initialize the MutationRate of all amino acid to the determined rate
-GA_Parameters::GA_Parameters() {
-    MutationRateXaa.resize(alphabetSize, mutationRate);
-    MutationRateYaa.resize(alphabetSize, mutationRate);
-}
-
-// GA_Parameters function to turn Mutation rate of exluded amino acids to 0
-void GA_Parameters::setXaaMutationRateToZero(char aminoAcid) {
-    auto it = std::find(alphabet.begin(), alphabet.end(), aminoAcid);
-    if (it != alphabet.end()) {
-        int index = std::distance(alphabet.begin(), it);
-        MutationRateXaa[index] = 0;
-    }
-}
-
-void GA_Parameters::setYaaMutationRateToZero(char aminoAcid) {
-    auto it = std::find(alphabet.begin(), alphabet.end(), aminoAcid);
-    if (it != alphabet.end()) {
-        int index = std::distance(alphabet.begin(), it);
-        MutationRateYaa[index] = 0;
-    }
 }
 
 
@@ -485,7 +514,7 @@ GA_Parameters CrossOver (GA_Parameters Parents) {
     short numPep = Parents.numPep;
     
 
-    vector<vector<vector<char>>> totalOffsprings;
+    vector<vector<vector<char> > > totalOffsprings;
     vector <int> OffspringsGlyPos;
     
     // generate a random number from 0 to 1

@@ -50,7 +50,7 @@ int main(int argc, const char * argv[]) {
     
     // Check if file is opened successfully
     if (!file.is_open()) {
-        cerr << "Unable to open file" << std::endl;
+        cerr << "Unable to open AminoAcids.csv file" << endl;
         return 1; // Return with error code
     }
 
@@ -60,19 +60,34 @@ int main(int argc, const char * argv[]) {
         int value;
         char AA;
 
+        // Read the amino acid
         getline(ss, item, ',');
-        if (stringstream(item) >> AA) validAA.push_back(tolower(AA));
-        
+        if (stringstream(item) >> AA) {
+            validAA.push_back(tolower(AA)); // Store amino acid as lowercase
+        }
+
         // Get Xaa value
         getline(ss, item, ',');
-        if (stringstream(item) >> value) Xaa.push_back(value);
-        
+        if (stringstream(item) >> value) {
+            if (value != 0 && value != 1) {
+                cerr << "Error: Invalid Xaa value '" << value << "' found in AminoAcids.csv file. Only '0' and '1' are allowed." << endl;
+                return 1; // Exit with error code
+            }
+            Xaa.push_back(value);
+        }
+
         // Get Yaa value
         getline(ss, item, ',');
-        if (stringstream(item) >> value) Yaa.push_back(value);
+        if (stringstream(item) >> value) {
+            if (value != 0 && value != 1) {
+                cerr << "Error: Invalid Yaa value '" << value << "' found in AminoAcids.csv file. Only '0' and '1' are allowed." << endl;
+                return 1; // Exit with error code
+            }
+            Yaa.push_back(value);
+        }
     }
-    file.close();
 
+        file.close();
     bool excludeXaa = false;
     int numXaaExcluded = 0;
     vector<char> excludedXaaList;

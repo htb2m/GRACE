@@ -393,8 +393,6 @@ double PairWiseCalc (double XPW[], double LPW[], short currentPair, short lastPa
 
 TripleHelix ScoreHelix (parameterType parameters, TripleHelix theHelix);
 
-short readLibrary (TripleHelix * Lib, string Lib_Name);
-void writeLibrary(TripleHelix*Lib, int TotalOutput, string filename);
 
 
 #endif /* SCEPTTr_hpp */

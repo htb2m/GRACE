@@ -33,38 +33,38 @@ bool findGlyAtEveryThird(int seqLength, std::vector<char>& userSequence, int& fi
 
 struct GA_Parameters {
     
-    int maxHelices = 1250; // the array size of SCEPTTr library
-    bool AAB = false; // if true, generate AAB ht instead of ABC ht
+    int maxHelices; // the array size of SCEPTTr library
+    bool AAB; // if true, generate AAB ht instead of ABC ht
     
-    // cannonical amino acids and hydroxyproline abbreviations
-    vector<char> alphabet = {'a', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'v', 'w', 'y'};
+    // cannonical amino acids  abbreviations
+    vector<char> alphabet;
   
-    int alphabetSize = alphabet.size();
+    int alphabetSize;
     
-    int populationSize = maxHelices;
-    int numAA = 30;
-    int numPep = 3;
-    int GlyPos = 0;
-    vector<vector<vector<char>>> Helices;
+    int populationSize;
+    int numAA;
+    int numPep;
+    int GlyPos;
+    vector<vector<vector<char> > > Helices;
     
-    double crossoverRate = 0;
-    double mutationRate = 0.3;
+    double crossoverRate;
+    double mutationRate;
     vector<double> MutationRateXaa;
     vector<double> MutationRateYaa;
     
     
-    bool excludeXaa = false;
-    bool excludeYaa = false;
-    int numExcludedXaa = 0;
-    int numExcludedYaa = 0;
+    bool excludeXaa;
+    bool excludeYaa;
+    int numExcludedXaa;
+    int numExcludedYaa;
     vector<char> excludedXaaList;
     vector<char> excludedYaaList;
 
     
-    bool haveMotif = false;
-    int motifLength = 0;
-    int randomSeqLength = 15;
-    vector<vector<char>> MotifSequences;
+    bool haveMotif;
+    int motifLength;
+    int randomSeqLength;
+    vector<vector<char> > MotifSequences;
 
     
 
