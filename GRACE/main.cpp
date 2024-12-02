@@ -20,6 +20,12 @@
 
 using namespace std;
 
+bool isValidNumber(const string &s, int &value) {
+    stringstream ss(s);
+    ss >> value;               // Try to parse the string as an integer
+    return !(ss.fail() || !ss.eof()); // Valid if parsing succeeds and nothing is left over
+}
+
 
 int main(int argc, const char * argv[]) {
    
@@ -37,7 +43,7 @@ int main(int argc, const char * argv[]) {
     cout << "    by T.HA BUI from Hartgerink Lab @ Rice University  " << endl << endl;
     cout << "---------------------------------------------------------" << endl;
     
-    cout << endl << endl;
+    cout << endl;
     
     // Read the AminoAcid.csv file
     ifstream file("AminoAcids.csv");
@@ -50,9 +56,11 @@ int main(int argc, const char * argv[]) {
     
     // Check if file is opened successfully
     if (!file.is_open()) {
-        cerr << "Unable to open AminoAcids.csv file" << endl;
+        cerr << "Unable to open file" << endl;
         return 1; // Return with error code
     }
+    
+
 
     while (getline(file, line)) {
         stringstream ss(line);
@@ -70,24 +78,32 @@ int main(int argc, const char * argv[]) {
         getline(ss, item, ',');
         if (stringstream(item) >> value) {
             if (value != 0 && value != 1) {
-                cerr << "Error: Invalid Xaa value '" << value << "' found in AminoAcids.csv file. Only '0' and '1' are allowed." << endl;
+                cerr << "Error: Invalid Xaa value '" << value << "' found in AminoAcids.csv file AminoAcids.csv file. Only '0' and '1' are allowed." << endl;
                 return 1; // Exit with error code
             }
             Xaa.push_back(value);
+        } else {
+            cerr << "Error: Invalid Xaa value found. Must be a number (0 or 1)." << endl;
+            return 1;
         }
 
         // Get Yaa value
         getline(ss, item, ',');
         if (stringstream(item) >> value) {
             if (value != 0 && value != 1) {
-                cerr << "Error: Invalid Yaa value '" << value << "' found in AminoAcids.csv file. Only '0' and '1' are allowed." << endl;
+                cerr << "Error: Invalid Yaa value '" << value << "' found in AminoAcids.csv file. Only '0' and '1 are allowed." << endl;
                 return 1; // Exit with error code
             }
             Yaa.push_back(value);
         }
+        else {
+            cerr << "Error: Invalid Yaa value found AminoAcids.csv file. Must be a number (0 or 1)." << endl;
+            return 1;
+        }
     }
 
-        file.close();
+    file.close();
+    
     bool excludeXaa = false;
     int numXaaExcluded = 0;
     vector<char> excludedXaaList;
