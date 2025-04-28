@@ -169,7 +169,7 @@ int main(int argc, const char * argv[]) {
         while (true) {
             Seq1.clear();
             string input1;
-            cout << "Please enter your flank sequence 1: " << endl;
+            cout << "Please enter your sequence 1: " << endl;
             cin >> input1;
 
             // Check if the input matches the pre-determined length
@@ -222,7 +222,7 @@ int main(int argc, const char * argv[]) {
             Seq2.clear();
 
             string input2;
-            cout << "Please enter your flank sequence 2: " << endl;
+            cout << "Please enter your sequence 2: " << endl;
             cin >> input2;
 
             // Check if the input length
@@ -273,7 +273,7 @@ int main(int argc, const char * argv[]) {
             Seq3.clear();
 
             string input3;
-            cout << "Please enter your flank sequence 3: " << endl;
+            cout << "Please enter your sequence 3: " << endl;
             cin >> input3;
 
             // Check if the input length
@@ -365,7 +365,7 @@ int main(int argc, const char * argv[]) {
    
    
     
-    
+   
 // // // // // // // // // // // // // // ///   END OF UI  // // // // // // // // // // // // // // // //
     
 
@@ -429,7 +429,20 @@ int main(int argc, const char * argv[]) {
         
     cout << endl;
     cout << "Generating random population..." << endl << endl;
+    
+    
+    
+ 
 
+    // Holder for fitness lanscape tracking
+    vector <double> FSHolder;
+    vector <int> GenerationHolder;
+    vector <double> TmHolder;
+    vector<double> SpecHolder;
+    vector<double> TimeElapsed;
+    vector<double> MeltingTemp;
+    vector<double> Spec;
+    auto start_time = std::chrono::high_resolution_clock::now();
 
     // // // // // // // // // // //   GENERATE POPULATION  // // // // // // // // // // // // //
     
@@ -438,52 +451,35 @@ int main(int argc, const char * argv[]) {
     Parents = initialPopulationGenerator(Parents); // random sequence
     
 
- 
-    
+   
     // // // // // // // // // // //   SCORE POPULATION // // // // // // // // // // // // //
     
-    
-    vector<double> FNScore = fitnessScore(Parents, Library, parameters);
+    MeltingTemp.clear();
+    Spec.clear();
+    vector<double> FNScore = fitnessScore(Parents, Library, parameters, MeltingTemp, Spec);
 
     
     // // // // // // // // // // // // //  SELECTION   // // // // // // // // // // // // //
    
-    
+    vector<int> bestHelixID;
     //GA_Parameters bestParents = Selection(Parents, FNScore);
-    GA_Parameters bestParents = Selection(Parents, FNScore);
+    GA_Parameters bestParents = Selection(Parents, FNScore, bestHelixID);
     
+    int bestID = bestHelixID[0];
+    FSHolder.push_back(FNScore[bestID]);
+    TmHolder.push_back(MeltingTemp[bestID]);
+    SpecHolder.push_back(Spec[bestID]);
+    GenerationHolder.push_back(0);
+    bestHelixID.clear();
+    // set the clock to track run time
+    //auto start_time = std::chrono::high_resolution_clock::now();
+    
+    auto now = chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed = now - start_time;
+    TimeElapsed.push_back(elapsed.count());
    
     Parents = bestParents; // 2 helices with best fitness score are now Parents for the next generation
    
-   
-
-    // // // // // // // // // // // //  MUTATION  // // // // // // // // // // // // //
- 
-   
- 
-   GA_Parameters MutatedOS;
-   if (!haveMotif) {
-       MutatedOS = Mutation(Parents);
-   } else {
-       MutatedOS = Mutation_withMotif(Parents);
-   }
-
-    Parents = MutatedOS;
-   
-    
-    if (Parents.haveMotif) {
-            // // // // // // // // // // //   SCORE POPULATION // // // // // // // // // // // // //
-
-            FNScore = fitnessScore(Parents, Library, parameters);
-
-
-            // // // // // // // // // // // // //  SELECTION   // // // // // // // // // // // // //
-
-            bestParents = Selection(Parents, FNScore);
-
-            Parents = bestParents; // 2 helices with best fitness score are now Parents for the next generation
-
-    }
 
 
     
@@ -492,26 +488,60 @@ int main(int argc, const char * argv[]) {
     GA_Parameters CrossoverOS;
     if (Parents.haveMotif) {
         CrossoverOS = CrossOver_withMotif(Parents);
+        Parents = CrossoverOS;
+        MeltingTemp.clear();
+        Spec.clear();
+        FNScore = fitnessScore(Parents, Library, parameters, MeltingTemp, Spec);
+          // // // // // // // // // // // // //  SELECTION   // // // // // // // // // // // // //
+          bestParents = Selection(Parents, FNScore, bestHelixID);
+
+          Parents = bestParents; // 2 helices with best fitness score are now Parents for the next generation
     } else {
         CrossoverOS = CrossOver(Parents);
+        Parents = CrossoverOS;
     }
-    
-    
+
+
+     // // // // // // // // // // //  MUTATION  // // // // // // // // // // // // //
+   
+   
+   
+      GA_Parameters MutatedOS;
+      if (!haveMotif) {
+          MutatedOS = Mutation(Parents);
+      } else {
+          MutatedOS = Mutation_withMotif(Parents);
+      }
+   
+       Parents = MutatedOS;
+   
      
     // // // // // // // // // // //   SCORE POPULATION // // // // // // // // // // // // //
     
+    MeltingTemp.clear();
+    Spec.clear();
+    FNScore = fitnessScore(Parents, Library, parameters, MeltingTemp, Spec);
     
-    FNScore = fitnessScore(Parents, Library, parameters);
    
-    
+
+   
     // // // // // // // // // // // // //  SELECTION   // // // // // // // // // // // // //
    
     
-    bestParents = Selection(Parents, FNScore);
+    bestParents = Selection(Parents, FNScore, bestHelixID);
     
     Parents = bestParents; // 2 helices with best fitness score are now Parents for the next generation
    
-   
+    bestID = bestHelixID[0];
+    FSHolder.push_back(FNScore[bestID]);
+    GenerationHolder.push_back(1);
+    TmHolder.push_back(MeltingTemp[bestID]);
+    SpecHolder.push_back(Spec[bestID]);
+    bestHelixID.clear();
+    
+    now = chrono::high_resolution_clock::now();
+    elapsed = now - start_time;
+    TimeElapsed.push_back(elapsed.count());
    
     // // // // // // // // // // // // //  EVOLUTION LOOP  // // // // // // // // // // // // //
     
@@ -545,6 +575,27 @@ int main(int argc, const char * argv[]) {
        
         cout << "Generation number " << rounds + 1 << " - ";
         
+        // // // // // // // // // // // // //  CROSSOVER  // // // // // // // // // // // // //
+        //CrossoverOS;
+        if (Parents.haveMotif) {
+           
+            CrossoverOS = CrossOver_withMotif(Parents);
+            Parents = CrossoverOS;
+            MeltingTemp.clear();
+            Spec.clear();
+            FNScore = fitnessScore(Parents, Library, parameters, MeltingTemp, Spec);
+            // // // // // // // // // // // // //  SELECTION   // // // // // // // // // // // // //
+            bestParents = Selection(Parents, FNScore, bestHelixID);
+            Parents = bestParents;
+        } else {
+            CrossoverOS = CrossOver(Parents);
+            Parents = CrossoverOS;
+        }
+        
+       
+        cout << "Crossover..";
+        
+           
         // // // // // // // // // // // // //   MUTATION  // // // // // // // // // // // // //
         
         if (Parents.haveMotif) {
@@ -555,52 +606,17 @@ int main(int argc, const char * argv[]) {
         Parents = MutatedOS;
         cout << "Mutation...";
         
-        
-        if (Parents.haveMotif) {
-            // // // // // // // // // // // // FITNESS COMPUTING  // // // // // // // // // // // // //
-            
-            FNScore = fitnessScore(Parents, Library, parameters);
-            
-            cout << "Fitness computing..." ;
-           
-            // // // // // // // // // // // BEST PARENTS SELECTION  // // // // // // // // // // // //
-            bestParents = Selection(Parents, FNScore);
-            
-            Parents = bestParents; // bestParents are now Parent for the next generation
-            
-            cout << "Selecting parent helices...";
-            
-        }
-
-        
-        // // // // // // // // // // // // //  CROSSOVER  // // // // // // // // // // // // //
-        
-        GA_Parameters CrossoverOS;
-        if (Parents.haveMotif) {
-            CrossoverOS = CrossOver_withMotif(Parents);
-        } else {
-            CrossoverOS = CrossOver(Parents);
-        }
-        
-        Parents = CrossoverOS;
-        cout << "Crossover..";
-        
-
-        
-       
-        
-        
-        
-        
+    
         
         // // // // // // // // // // // // FITNESS COMPUTING  // // // // // // // // // // // // //
-        
-        FNScore = fitnessScore(Parents, Library, parameters);
+        MeltingTemp.clear();
+        Spec.clear();
+        FNScore = fitnessScore(Parents, Library, parameters, MeltingTemp, Spec);
         
         cout << "Fitness computing..." ;
        
         // // // // // // // // // // // BEST PARENTS SELECTION  // // // // // // // // // // // //
-        bestParents = Selection(Parents, FNScore);
+        bestParents = Selection(Parents, FNScore, bestHelixID);
         
         Parents = bestParents; // bestParents are now Parent for the next generation
         
@@ -608,6 +624,16 @@ int main(int argc, const char * argv[]) {
         
         cout << endl;
        
+        int bestID = bestHelixID[0];
+        FSHolder.push_back(FNScore[bestID]);
+        TmHolder.push_back(MeltingTemp[bestID]);
+        SpecHolder.push_back(Spec[bestID]);
+        GenerationHolder.push_back(rounds + 2);
+        bestHelixID.clear();
+        
+        now = chrono::high_resolution_clock::now();
+        elapsed = now - start_time;
+        TimeElapsed.push_back(elapsed.count());
         
         // // // // // // // // // // // LOOP-BREAKING CONDITIONS // // // // // // // // // // // //
         
@@ -658,10 +684,44 @@ int main(int argc, const char * argv[]) {
     
     }
     
-    cout << endl;
+
     
  
+    // Check size consistency
+    if (FSHolder.size() != GenerationHolder.size()) {
+        cerr << "Error: Mismatched vector sizes.\n";
+        return 1;
+    }
+
+    if (FSHolder.size() != TmHolder.size()) {
+        cerr << "Error: Mismatched vector sizes Tm.\n";
+        return 1;
+    }
     
+    if (FSHolder.size() != SpecHolder.size()) {
+        cerr << "Error: Mismatched vector sizes Spec.\n";
+        return 1;
+    }
+    
+
+    
+    // Open CSV file
+    std::ofstream outFile("output1.csv");
+    if (!outFile.is_open()) {
+        cerr << "Failed to open file for writing.\n";
+        return 1;
+    }
+
+    // Write header
+    outFile << "Generation,TimeElapsed,FitnessScore,Tm,Spec\n";
+    cout << "here" << endl;
+    // Write data rows
+    for (size_t i = 0; i < FSHolder.size(); ++i) {
+        outFile << GenerationHolder[i] << "," << TimeElapsed[i] << "," << FSHolder[i] << "," << TmHolder[i] << "," << SpecHolder[i] << "\n";
+    }
+
+    outFile.close();
+    std::cout << "Data written to output.csv successfully.\n";
     
     
     

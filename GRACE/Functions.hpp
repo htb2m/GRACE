@@ -96,8 +96,10 @@ GA_Parameters Mutation (GA_Parameters parents);
 
 vector<double> fitnessScore (GA_Parameters GAparameters,
                              TripleHelix * Library,
-                             parameterType helixParameters);
+                             parameterType helixParameters,
+                             vector<double>& MeltingTemp,
+                             vector<double>& Spec);
 
-GA_Parameters Selection (GA_Parameters Parents, const vector<double>& fitnessScores);
+GA_Parameters Selection (GA_Parameters Parents, const vector<double>& fitnessScores, vector<int>& bestHelixID);
 
 #endif /* Functions_hpp */

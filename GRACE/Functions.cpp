@@ -35,13 +35,13 @@ GA_Parameters::GA_Parameters() {
    
     AAB = false; // if true, generate AAB ht instead of ABC ht
     
-    populationSize = maxHelices;
+    populationSize = 500;
     numAA = 30;
     numPep = 3;
     GlyPos = 0;
 
-    crossoverRate = 0;
-    mutationRate = 0.3;
+    crossoverRate = 1;
+    mutationRate = 0.2;
     
     excludeXaa = false;
     excludeYaa = false;
@@ -284,7 +284,8 @@ GA_Parameters initialPopulationGenerator(GA_Parameters GAparameters) {
             
             
             // Randomly generate frameshift, GlyPos can be 0 (Gxy), 1 (yGx), or 2 (xyG)
-            GAparameters.GlyPos = rand() % 3;
+            //GAparameters.GlyPos = rand() % 3;
+            GAparameters.GlyPos = 0;
 
             for (int i = 0; i < GAparameters.numPep; i++) { // INSERT Gly to EVERY THIRD POS
                 for (int j = GAparameters.GlyPos; j < GAparameters.numAA; j+=3) {
@@ -927,7 +928,9 @@ void SCEPTTr12(TripleHelix * Library,
 
 vector<double> fitnessScore (GA_Parameters GAparameters,
                              TripleHelix * Library,
-                            parameterType helixParameters) {
+                            parameterType helixParameters,
+                             vector<double>& MeltingTemp,
+                             vector<double>& Spec) {
     vector<double> FitnessScore;
     FitnessScore.reserve(GAparameters.populationSize);
     FitnessScore.clear();
@@ -981,6 +984,8 @@ vector<double> fitnessScore (GA_Parameters GAparameters,
        
     }
     
+    MeltingTemp = Tm;
+    Spec = specificity;
     
     
     return FitnessScore;
@@ -1021,9 +1026,10 @@ vector<int> findIndicesOfTwoHighest(GA_Parameters parameters, const vector<doubl
     return Indices;
 }
 
-GA_Parameters Selection (GA_Parameters Parents, const vector<double>& fitnessScores) {
-    vector<int> bestHelicesIndex = findIndicesOfTwoHighest(Parents,  fitnessScores);
+GA_Parameters Selection (GA_Parameters Parents, const vector<double>& fitnessScores, vector<int>& bestHelixID) {
     
+    vector<int> bestHelicesIndex = findIndicesOfTwoHighest(Parents,  fitnessScores);
+    bestHelixID = bestHelicesIndex;
   
     GA_Parameters bestParents = Parents;
     // Redefine parameters of bestParents
