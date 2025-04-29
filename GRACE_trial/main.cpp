@@ -18,7 +18,6 @@
 #include <unordered_set>
 #include <set>
 #include <chrono>
-#include <algorithm>
 
 using namespace std;
 
@@ -379,7 +378,7 @@ int main(int argc, const char * argv[]) {
     GA_Parameters Parents;
     
     
-    TripleHelix*Library = new TripleHelix[Parents.maxHelices];
+    TripleHelix Library[Parents.maxHelices];
     parameterType parameters;
     parameters = ReadParameters();
     
@@ -727,6 +726,6 @@ int main(int argc, const char * argv[]) {
     
     
     
-    delete [] Library;
+   
     return 0;
 }
