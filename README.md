@@ -58,6 +58,6 @@ Ensure these files are in the same directory as the compiled executable.
 ## 5. Notes
 - Search time may range from minutes to hours depending on sequence length and conditions.
 
-- Please expect that there are chances that the algorithm cannot find a set of sequences that satisfy all given conditions. In that case, the algorithm is terminated after 500,000 iterations and outputs the closet results found. 
+- Please expect that there are chances that the algorithm cannot find a set of sequences that satisfy all given conditions. In that case, the algorithm is terminated after 500,000 iterations and outputs the closest results found. 
 
 - Please expect instance when the algorithm shows minimal progress over several generations. In that case, re-initializing the population by starting the algorithm over can help escape the trap by setting the search at a different location.
