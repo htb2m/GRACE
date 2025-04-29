@@ -40,7 +40,7 @@ GA_Parameters::GA_Parameters() {
     numPep = 3;
     GlyPos = 0;
 
-    crossoverRate = 1;
+    crossoverRate = 0.6;
     mutationRate = 0.2;
     
     excludeXaa = false;
