@@ -17,11 +17,11 @@
 ## 2. Compilation Instructions
 
 - Navigate to the directory containing the source files:
-	- main.cpp
-	- Functions.cpp
-	- SCEPTTr.cpp
-	- Functions.hpp
-	- SCEPTTr.hpp
+	- `main.cpp`
+	- `Functions.cpp`
+	- `SCEPTTr.cpp`
+	- `Functions.hpp`
+	- `SCEPTTr.hpp`
 
 
 	```
