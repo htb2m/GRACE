@@ -708,7 +708,7 @@ int main(int argc, const char * argv[]) {
 
     
     // Open CSV file
-    std::ofstream outFile("output1.csv");
+    std::ofstream outFile("FitnessLandscape.csv");
     if (!outFile.is_open()) {
         cerr << "Failed to open file for writing.\n";
         return 1;
@@ -723,7 +723,7 @@ int main(int argc, const char * argv[]) {
     }
 
     outFile.close();
-    std::cout << "Data written to output.csv successfully.\n";
+    cout << "Fitness score to FitnessLandscape.csv successfully.\n";
     
     
     
