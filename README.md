@@ -15,7 +15,7 @@
 ---
 
 ## 2. Compilation Instructions
-
+- Download the source code
 - Navigate to the directory containing the source files: `main.cpp`  `Functions.cpp`  `SCEPTTr.cpp`  `Functions.hpp`  `SCEPTTr.hpp`
 
 
