@@ -641,7 +641,7 @@ int main(int argc, const char * argv[]) {
         
         if (((Library[0].HighTm >= userTm ) and (Library[0].specificity >= userSpec)  and  ((Library[0].bestRegister[0] != Library[0].bestRegister[1]) or (Library[0].bestRegister[0] != Library[0].bestRegister[2]) or (Library[0].bestRegister[1] != Library[0].bestRegister[2])))
             or
-            (rounds == 100000)) // return the closest result
+            (rounds == 500000)) // return the closest result if no satisfied sequences were found after 500000 generations
         {
             done = true;
         }
@@ -653,7 +653,7 @@ int main(int argc, const char * argv[]) {
     // // // // // // // // // // // DISPLAY FINAL RESULTS // // // // // // // // // // // //
     cout << endl << endl << endl;
     cout << "-------------------------------------------------------------" << endl;
-    if (rounds == 500000) {
+    if (rounds == 500001) {
         cout << "Cannot come up with sequences that satisfy all the given conditions. Displaying the best result found: " << endl << endl;
     }
     
