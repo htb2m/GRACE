@@ -78,6 +78,13 @@ parameterType ReadParameters(void)
     while (!parameterFile.eof())
     {
         getline(parameterFile, StringLine);
+        
+        if (StringLine == "Date") {
+            //cout << "we found Date" << endl;
+            parameterFile >> parameters.Date;
+        }
+        
+        
         if (StringLine == "Length")
         {
             //cout << "we found Length" << endl;

@@ -20,6 +20,7 @@ using namespace std;
 
 struct parameterType
 {
+    string Date;
     // These are all the parameters that can be read in from file or optimized
     double axial[27][27];
     double lateral[27][27];
